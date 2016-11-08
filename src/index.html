@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+  </head>
+  <body>
+    <nav class="grey darken-2" style="-webkit-app-region: drag">
+      <div class="nav-wrapper">
+        <a href="#" class="brand-logo">Pegasus</a>
+        <ul id="nav-mobile" class="right">
+          <li style="-webkit-app-region: no-drag">
+            <a onclick="close_window()" href="#"><i class="material-icons">close</i></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container" style="margin-top: 12px">
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s6">
+            <i class="material-icons prefix">location_on</i>
+            <input id="site" type="text">
+            <label for="site">Site</label>
+          </div>
+          <div class="input-field col s6">
+            <i class="material-icons prefix">account_circle</i>
+            <input id="login" type="text">
+            <label for="login">Login</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s8">
+            <i class="material-icons prefix">lock</i>
+            <input id="password" type="password">
+            <label for="password">Password</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input disabled id="gen_pass" type="text">
+            <label for="gen_pass">Generated Password</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2">
+            <input type="checkbox" id="numbers" checked="checked" />
+            <label for="numbers">123</label>
+          </div>
+          <div class="col s2">
+            <input type="checkbox" id="symbols" checked="checked" />
+            <label for="symbols">%!&amp;</label>
+          </div>
+          <div class="col s2">
+            <input type="checkbox" id="more_symbols" />
+            <label for="more_symbols">{+/</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="length" type="number" value="18">
+            <label for="length">Length</label>
+          </div>
+          <div class="input-field col s6">
+            <input id="counter" type="number" value="1">
+            <label for="counter">Counter</label>
+          </div>
+        </div>
+      </form>
+    </div> 
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/2.4.0/seedrandom.min.js"></script>
+  <script src="bundle.js"></script>
+</html>
