@@ -17,7 +17,7 @@ const sign_key = (derived_key, salt) => {
   return crypto.subtle.sign({name: "HMAC", hash: "SHA-512"}, derived_key, salt);
 };
 
-const render_pass = (signature, numbers, symbols, more_symbols) => {
+const render_pass = (signature, numbers, symbols, more_symbols, length) => {
   var chars = 'abcdefghijklmnopqrstuvwxyz';
   chars = chars + chars.toUpperCase();
 
@@ -37,7 +37,7 @@ const render_pass = (signature, numbers, symbols, more_symbols) => {
 
   // Using: https://github.com/davidbau/seedrandom
   var rng = new Math.seedrandom(String.fromCharCode.apply(null, new Uint8Array(signature)));
-  for(var i = 0; i < 16; i++) {
+  for(var i = 0; i < length; i++) {
     pass = pass + chars[Math.floor(rng() * chars.length)];
   }
 
