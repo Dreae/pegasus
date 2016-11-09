@@ -2,6 +2,10 @@ body {
   width: 540px;
 }
 
+.navbar-default {
+  background-color: #3d3d3d;
+}
+
 .input-group-addon:first-child {
   background-color: #fff;
 }
