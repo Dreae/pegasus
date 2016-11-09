@@ -2,75 +2,134 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>Pegasus</title>
   </head>
   <body>
-    <nav class="grey darken-2" style="-webkit-app-region: drag">
-      <div class="nav-wrapper">
-        <a href="#" class="brand-logo">Pegasus</a>
-        <ul id="nav-mobile" class="right">
-          <li style="-webkit-app-region: no-drag">
-            <a onclick="close_window()" href="#"><i class="material-icons">close</i></a>
-          </li>
-        </ul>
+    <nav class="navbar navbar-default" style="-webkit-app-region: drag">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">
+            <img alt="Pegasus" src="icon-64.png" width="32" style="margin-top: -6px">
+          </a>
+          <a id="close_button" class="nav-link-btn pull-right">
+            <span class="glyphicon glyphicon-remove"></span>
+          </a>
+          <a id="about_button" class="nav-link-btn pull-right" data-toggle="modal" data-target="#about_modal">
+            <span class="glyphicon glyphicon-info-sign"></span>
+          </a>
+        </div>
       </div>
     </nav>
-    <div class="container" style="margin-top: 12px">
-      <form class="col s12">
-        <div class="row">
-          <div class="input-field col s6">
-            <i class="material-icons prefix">location_on</i>
-            <input id="site" type="text">
-            <label for="site">Site</label>
-          </div>
-          <div class="input-field col s6">
-            <i class="material-icons prefix">account_circle</i>
-            <input id="login" type="text">
-            <label for="login">Login</label>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-6">
+          <label for="site">Site</label>
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-globe"></span></span>
+            <input class="form-control" id="site" type="text">
           </div>
         </div>
-        <div class="row">
-          <div class="input-field col s8">
-            <i class="material-icons prefix">lock</i>
-            <input id="password" type="password">
-            <label for="password">Password</label>
-          </div>
-          <div class="input-field col s4">
-            <a class="waves-effect waves-light btn grey darken-2 white-text" onclick="generate_password()">Generate</a>
+        <div class="col-xs-6">
+          <label for="login">Login</label>
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+            <input class="form-control" id="login" type="text">
           </div>
         </div>
-        <div class="row">
-          <div class="input-field col s12">
-            <input disabled id="gen_pass" class="black-text" type="text">
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <label for="password">Password</label>
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+            <input class="form-control" id="password" type="password">
+            <span class="input-group-btn">
+              <button class="btn btn-default" id="generate_button">
+                <span class="glyphicon glyphicon-repeat"></span> Generate
+              </button>
+            </span>
           </div>
         </div>
-        <div class="row">
-          <div class="col s2">
-            <input type="checkbox" id="numbers" checked="checked" />
-            <label for="numbers">123</label>
-          </div>
-          <div class="col s2">
-            <input type="checkbox" id="symbols" checked="checked" />
-            <label for="symbols">%!&amp;</label>
-          </div>
-          <div class="col s2">
-            <input type="checkbox" id="more_symbols" />
-            <label for="more_symbols">{+/</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <input id="length" type="number" value="18">
-            <label for="length">Length</label>
-          </div>
-          <div class="input-field col s6">
-            <input id="counter" type="number" value="1">
-            <label for="counter">Counter</label>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <label>Generated Password</label>
+          <div class="input-group">
+            <input class="form-control" readonly="readonly" id="gen_pass" type="text">
+            <span class="input-group-btn">
+              <button class="btn btn-default" id="copy_button" data-clipboard-target="#gen_pass">
+               <span class="glyphicon glyphicon-copy"></span> Copy
+              </button>
+            </span>
           </div>
         </div>
-      </form>
-    </div> 
+      </div>
+      <div class="row">
+        <div class="col-xs-2">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" id="numbers" checked>
+              123
+            </label>
+          </div>
+        </div>
+        <div class="col-xs-2">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" id="symbols" checked>
+              %!&amp;
+            </label>
+          </div>
+        </div>
+        <div class="col-xs-2">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" id="more_symbols">
+              {+/
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-xs-6">
+          <input class="form-control" id="length" type="number" value="18">
+          <label for="length">Length</label>
+        </div>
+        <div class="form-group col-xs-6">
+          <input class="form-control" id="counter" type="number" value="1">
+          <label for="counter">Counter</label>
+        </div>
+      </div>
+    </div>
+    <div id="about_modal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Pegasus</h4>
+          </div>
+          <div class="modal-body">
+            <p>
+              A simple password generator. Pegasus uses the info you enter for the site
+              you're loggin in to, in combination with your master password to deterministically 
+              generate a password for logging in to that site. This allows you to use a
+              unique, secure password with each site, without needing to keep track of 
+              password database.
+            </p>
+            <p>
+              More info available on <a href="https://github.com/Dreae/pegasus">github</a>
+            </p>
+
+            <div>Pegasus icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+
+            <div>Icont font by <a href="http://glyphicons.com/">Glyphicons</a></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/2.4.0/seedrandom.min.js"></script>
   <script src="bundle.js"></script>
 </html>

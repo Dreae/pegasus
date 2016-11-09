@@ -4,7 +4,8 @@
   "description": "A minimal password generator",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "rm -rf build/ && webpack && cp manifest.json build/ && cd build && zip -r pegasus.zip ./* && cp pegasus.zip pegasus.xpi"
   },
   "repository": "https://github.com/Dreae/pegasus",
   "keywords": [
@@ -16,11 +17,12 @@
     "electron": "^1.4.5"
   },
   "dependencies": {
+    "clipboard": "^1.5.15",
     "css-loader": "^0.25.0",
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.24.1",
-    "material-design-icons": "^3.0.1",
-    "materialize-css": "^0.97.8",
+    "jquery": "^2.2.4",
+    "seedrandom": "^2.4.2",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.3"
   }

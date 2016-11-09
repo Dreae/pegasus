@@ -1,16 +1,23 @@
+"use strict";
+
+window.$ = window.jQuery = require('jquery'); 
 const crypt = require("./pegasus-crypto");
-const electron = require("electron");
+const Clipboard = require('clipboard');
 
-require("../node_modules/materialize-css/dist/js/materialize.min.js");
-require("../node_modules/materialize-css/dist/css/materialize.min.css");
-require("../node_modules/material-design-icons/iconfont/material-icons.css");
+require('./lib/css/bootstrap.min.css');
+require('./lib/js/bootstrap.min.js');
+require('seedrandom');
 
-window.close_window = () => {
-  electron.remote.getCurrentWindow().close();
+
+require("file?name=icon-32.png!./icon-32.png");
+require("file?name=icon-64.png!./icon-64.png");
+require("./style.css");
+
+const close_window = () => {
+  window.close();
 };
 
-
-window.generate_password = () => {
+const generate_password = (e) => {
   let master_pass = document.getElementById("password").value;
   let login = document.getElementById("login").value;
   let site = document.getElementById("site").value;
@@ -23,7 +30,16 @@ window.generate_password = () => {
   gen_pass(master_pass, site, login, count, length, numbers, symbols, more_symbols).then(function(pass) {
     document.getElementById("gen_pass").value = pass;
   });
+
+  e.preventDefault();
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('close_button').addEventListener('click', close_window);
+  document.getElementById('generate_button').addEventListener('click', generate_password);
+
+  new Clipboard("#copy_button");
+});
 
 const gen_pass = (master_pass, site, login, count, length, numbers, symbols, more_symbols) => {
   let encoder = new TextEncoder("utf-8");

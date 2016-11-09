@@ -1,5 +1,6 @@
 var path = require("path");
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var webpack = require('webpack');
 
 module.exports = {
   entry: './src/index',
@@ -7,9 +8,6 @@ module.exports = {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js',
   },
-  externals: [{
-    electron: "require('electron')"
-  }],
   plugins: [
     new HtmlWebpackPlugin({
       filename: "index.html",
@@ -20,7 +18,7 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.css$/, loader: "style-loader!css-loader" },
-      { test: /\.ttf|\.woff|\.woff2|\.eot$/, loader: "file" }
+      { test: /\.ttf|\.woff|\.woff2|\.eot|\.svg$/, loader: "file" }
     ]
   }
 };

@@ -12,8 +12,10 @@ let mainWindow;
 function createWindow () {
   mainWindow = new BrowserWindow({
     width: 540, 
-    height: 502,
-    frame: false
+    height: 380,
+    frame: false,
+    resizable: false,
+    icon: path.join(__dirname, 'build', 'icon-64.png')
   });
 
   mainWindow.loadURL(url.format({
