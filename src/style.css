@@ -22,3 +22,12 @@ body {
   font-size: 22px;
   margin-left: 18px;
 }
+
+.mar-horizontal-sm {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.addon {
+  width: 84px;
+}

@@ -17,7 +17,7 @@ const close_window = () => {
   window.close();
 };
 
-const generate_password = (e) => {
+const generate_password = () => {
   let master_pass = document.getElementById("password").value;
   let login = document.getElementById("login").value;
   let site = document.getElementById("site").value;
@@ -30,13 +30,13 @@ const generate_password = (e) => {
   gen_pass(master_pass, site, login, count, length, numbers, symbols, more_symbols).then(function(pass) {
     document.getElementById("gen_pass").value = pass;
   });
-
-  e.preventDefault();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('close_button').addEventListener('click', close_window);
-  document.getElementById('generate_button').addEventListener('click', generate_password);
+  document.getElementById('password').addEventListener('input', password_input);
+
+  generate_story();
 
   new Clipboard("#copy_button");
 });
@@ -54,3 +54,64 @@ const gen_pass = (master_pass, site, login, count, length, numbers, symbols, mor
     return crypt.render_pass(sig, numbers, symbols, more_symbols, length);
   });
 }
+
+const password_input = () => {
+  if(window.password_timeout) {
+    clearTimeout(window.password_timeout);
+  }
+
+  window.password_timeout = setTimeout(() => {
+    generate_story();
+    generate_password();
+  }, 500);
+};
+
+const icons = [
+  "bed",
+  "education",
+  "hourglass",
+  "lock",
+  "lamp",
+  "piggy-bank",
+  "pawn",
+  "king",
+  "cd",
+  "tree-conifer",
+  "tower",
+  "record",
+  "flash",
+  "phone",
+  "wrench",
+  "bullhorn",
+  "plane",
+  "fire",
+  "comment",
+  "headphones",
+  "home",
+  "heart"
+];
+
+const generate_story = () => {
+  crypt.import_key(new TextEncoder("utf-8").encode(document.getElementById("password").value)).then((key) => {
+    return crypt.derive_seed(key);
+  }).then((key) => {
+    return crypt.export_key(key);
+  }).then((bytes) => {
+    let rng = new Math.seedrandom(String.fromCharCode.apply(null, new Uint8Array(bytes)));
+    var story = document.getElementById("password_story");
+    while (story.firstChild) {
+        story.removeChild(story.firstChild);
+    }
+
+    for(let i = 0; i < 3; i++) {
+      let icon = icons[Math.floor(rng() * icons.length)];
+      let span = document.createElement('span');
+      span.classList.add("glyphicon");
+      span.classList.add("mar-horizontal-sm");
+
+      span.classList.add("glyphicon-" + icon);
+
+      story.appendChild(span);
+    }
+  });
+};

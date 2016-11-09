@@ -13,6 +13,21 @@ const derive_key = (master_key, salt) => {
   return crypto.subtle.deriveKey(algo, master_key, {name: "HMAC", hash: "SHA-512"}, false, ["sign"]); 
 };
 
+const export_key = (key) => {
+  return crypto.subtle.exportKey("raw", key);
+};
+
+const derive_seed = (key) => {
+  var algo = {
+    name: "PBKDF2",
+    salt: new TextEncoder("utf-8").encode(""),
+    iterations: 100000,
+    hash: "SHA-512"
+  };
+
+  return crypto.subtle.deriveKey(algo, key, {name: "AES-CTR", length: "256"}, true, ["encrypt"]);
+};
+
 const sign_key = (derived_key, salt) => {
   return crypto.subtle.sign({name: "HMAC", hash: "SHA-512"}, derived_key, salt);
 };
@@ -48,5 +63,7 @@ module.exports = {
   import_key,
   derive_key,
   sign_key,
-  render_pass
+  render_pass,
+  export_key,
+  derive_seed
 };

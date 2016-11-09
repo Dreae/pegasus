@@ -43,10 +43,9 @@
           <div class="input-group">
             <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
             <input class="form-control" id="password" type="password">
-            <span class="input-group-btn">
-              <button class="btn btn-default" id="generate_button">
-                <span class="glyphicon glyphicon-repeat"></span> Generate
-              </button>
+            <span class="input-group-addon addon">
+              <div id="password_story">
+              </div>
             </span>
           </div>
         </div>
@@ -57,7 +56,7 @@
           <div class="input-group">
             <input class="form-control" readonly="readonly" id="gen_pass" type="text">
             <span class="input-group-btn">
-              <button class="btn btn-default" id="copy_button" data-clipboard-target="#gen_pass">
+              <button class="btn btn-default addon" id="copy_button" data-clipboard-target="#gen_pass">
                <span class="glyphicon glyphicon-copy"></span> Copy
               </button>
             </span>
