@@ -35,8 +35,20 @@ const generate_password = () => {
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('close_button').addEventListener('click', close_window);
   document.getElementById('password').addEventListener('input', password_input);
+  
+  let inputs = document.getElementsByTagName("input");
+  for(let i = 0; i < inputs.length; i++) {
+    let input = inputs[i];
+    if(input.id === 'password') {
+      continue;
+    }
 
-  generate_story();
+    if(input.type === "checkbox") {
+      input.addEventListener('change', input_changed);
+    } else {
+      input.addEventListener('input', input_changed);
+    }
+  }
 
   new Clipboard("#copy_button");
 });
@@ -64,6 +76,18 @@ const password_input = () => {
     generate_story();
     generate_password();
   }, 500);
+};
+
+const input_changed = () => {
+  if(window.password_timeout) {
+    clearTimeout(window.password_timeout);
+  }
+
+  if(document.getElementById('password').value.length !== 0) {
+    window.password_timeout = setTimeout(() => {
+      generate_password();
+    }, 500);
+  }
 };
 
 const icons = [

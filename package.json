@@ -1,6 +1,6 @@
 {
   "name": "Pegasus",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A minimal password generator",
   "main": "main.js",
   "scripts": {
