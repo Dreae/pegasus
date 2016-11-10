@@ -1,6 +1,6 @@
 {
   "name": "Pegasus",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A minimal password generator",
   "main": "main.js",
   "scripts": {
@@ -14,7 +14,8 @@
   "author": "Dreae",
   "license": "Apache-2.0",
   "devDependencies": {
-    "electron": "^1.4.5"
+    "electron": "^1.4.5",
+    "electron-packager": "^8.2.0"
   },
   "dependencies": {
     "clipboard": "^1.5.15",
