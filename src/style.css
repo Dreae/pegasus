@@ -28,10 +28,33 @@ body {
   margin-right: 2px;
 }
 
+.mar-bottom-lg {
+  margin-bottom: 24px;
+}
+
+.mar-bottom-sm {
+  margin-bottom: 2px;
+}
+
 .addon {
   width: 84px;
 }
 
 #password_story {
   width: 59px
+}
+
+.login-form {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  z-index: 9;
+}
+
+.pos-relative {
+  position: relative;
 }

@@ -17,10 +17,64 @@
           <a id="about_button" class="nav-link-btn pull-right" data-toggle="modal" data-target="#about_modal">
             <span class="glyphicon glyphicon-info-sign"></span>
           </a>
+          <a id="login_button" class="nav-link-btn pull-right">
+            <span class="glyphicon glyphicon-log-in"></span>
+          </a>
+          <a id="logout_button" class="nav-link-btn pull-right hidden">
+            <span class="glyphicon glyphicon-log-out"></span>
+          </a>
         </div>
       </div>
     </nav>
-    <div class="container">
+    <div class="container-fluid pos-relative">
+      <div class="login-form hidden" id="login-container">
+        <div class="container">
+          <div class="row mar-bottom-lg">
+            <div class="col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                <input class="form-control" id="username" placeholder="Username" type="text">
+              </div>
+            </div>
+          </div>
+          <div class="row mar-bottom-lg">
+            <div class="col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                <input class="form-control" id="login_password" placeholder="Password" type="text">
+              </div>
+            </div>
+          </div>
+          <div class="row mar-bottom-sm">
+            <div class="col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                <input class="form-control" id="login_host" placeholder="Host" type="text">
+              </div>
+            </div>
+          </div>
+          <div class="row mar-bottom-lg">
+            <div class="col-xs-12">
+              <small class="text-muted">
+                The Pegasus server cannot decrypt your password profiles.
+              </small>
+            </div>
+          </div>
+          <div class="row mar-bottom-sm">
+            <div class="col-xs-4">
+              <button class="btn btn-primary" id="do_login_button">Login</button>
+              <button class="btn btn-default mar-horizontal-sm" id="cancel_login_button">Cancel</button>
+            </div>
+          </div>
+          <div class="row mar-bottom-lg">
+            <div class="col-xs-12">
+              <small class="text-danger hidden" id="login_error">
+                There was an error fetching your settings from the Pegasus host
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-xs-6">
           <label for="site">Site</label>

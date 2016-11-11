@@ -32,12 +32,48 @@ const generate_password = () => {
   gen_pass(master_pass, site, login, count, length, numbers, symbols, more_symbols).then(function(pass) {
     document.getElementById("gen_pass").value = pass;
   });
+};
+
+const do_login_click = () => {
+  let passowrd = document.getElementById("login_password").value;
+  let username = document.getElementById("username").value;
+  let host = document.getElementById("login_host").value;
+
+  $("#login_error").addClass("hidden");
+  do_login(username, password, host).then(() => {
+    $("#login-container").toggleClass("hidden");
+  }).catch((err) => {
+    $("#login_error").removeClass("hidden");
+  });
+};
+
+const show_login = (e) => {
+  $("#login-container").toggleClass("hidden");
+  e.preventDefault();
+};
+
+const cancel_login_click = (e) => {
+  $("#login-container").toggleClass("hidden");
+  e.preventDefault();
+};
+
+const do_logout_click = () => {
+  localStorage.removeItem("__pegasus.credential");
+  localStorage.removeItem("__pegasus.host");
+  localStorage.removeItem("__pegasus.login");
+
+  $("#login_button").toggleClass("hidden");
+  $("#logout_button").toggleClass("hidden");
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('close_button').addEventListener('click', close_window);
   document.getElementById('password').addEventListener('input', password_input);
-  
+  document.getElementById('login_button').addEventListener('click', show_login);
+  document.getElementById('logout_button').addEventListener('click', do_logout_click);
+  document.getElementById('do_login_button').addEventListener('click', do_login_click);
+  document.getElementById('cancel_login_button').addEventListener('click', cancel_login_click);
+
   let inputs = document.getElementsByTagName("input");
   for(let i = 0; i < inputs.length; i++) {
     let input = inputs[i];
@@ -54,6 +90,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   new Clipboard("#copy_button");
   if(get_login()) {
+    $("#login_button").toggleClass("hidden");
+    $("#logout_button").toggleClass("hidden");
+
     get_settings().then((settings) => {
       init_typeahead(settings);
     });
@@ -164,7 +203,7 @@ const do_login = (login, password, host) => {
     localStorage.setItem("__pegasus.login", login);
     localStorage.setItem("__pegasus.host", host);
 
-    get_settings();
+    return get_settings();
   });
 };
 
@@ -188,7 +227,13 @@ const gen_pass = (master_pass, site, login, count, length, numbers, symbols, mor
   }).then((sig) => {
     return crypt.render_pass(sig, numbers, symbols, more_symbols, length);
   });
-}
+};
+
+const show_save = () => {
+  if(get_login()) {
+
+  }
+};
 
 const password_input = () => {
   if(window.password_timeout) {
@@ -196,6 +241,7 @@ const password_input = () => {
   }
 
   window.password_timeout = setTimeout(() => {
+    show_save();
     generate_story();
     generate_password();
   }, 500);
@@ -208,6 +254,7 @@ const input_changed = () => {
 
   if(document.getElementById('password').value.length !== 0) {
     window.password_timeout = setTimeout(() => {
+      show_save();
       generate_password();
     }, 500);
   }
