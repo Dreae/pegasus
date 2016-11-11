@@ -21,6 +21,16 @@ body {
   -webkit-app-region: no-drag;
   font-size: 22px;
   margin-left: 18px;
+  cursor: pointer;
+}
+
+.nav-link-btn:hover {
+  color: #bbb;
+}
+
+.nav-link-btn .glyphicon {
+  vertical-align: middle;
+  cursor: pointer;
 }
 
 .mar-horizontal-sm {

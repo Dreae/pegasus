@@ -64,7 +64,16 @@ const do_logout_click = () => {
 
   $("#login_button").toggleClass("hidden");
   $("#logout_button").toggleClass("hidden");
-}
+};
+
+const do_save_click = (e) => {
+  window.__pegasus_settings.push(gen_settings());
+  put_settings(window.__pegasus_settings).then(() => {
+    $("#save_button").addClass("hidden");
+  });
+
+  e.preventDefault();
+};
 
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('close_button').addEventListener('click', close_window);
@@ -73,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('logout_button').addEventListener('click', do_logout_click);
   document.getElementById('do_login_button').addEventListener('click', do_login_click);
   document.getElementById('cancel_login_button').addEventListener('click', cancel_login_click);
+  document.getElementById('save_button').addEventListener('click', do_save_click);
 
   let inputs = document.getElementsByTagName("input");
   for(let i = 0; i < inputs.length; i++) {
@@ -94,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     $("#logout_button").toggleClass("hidden");
 
     get_settings().then((settings) => {
+      window.__pegasus_settings = settings;
       init_typeahead(settings);
     });
   }
@@ -134,16 +145,20 @@ const get_settings = () => {
     }).then((signature) => {
       let sig_encoded = encodeURIComponent(btoa(putil.bytes_to_string(signature)));
       $.getJSON(`${host}/api/${sig_encoded}`).done((data) => {
-        crypt.import_encryption_key(credential).then((key) => {
-          let iv = putil.string_to_bytes(atob(data.iv));
-          let ciphertext = putil.string_to_bytes(atob(data.data));
+        if(data.data && data.iv) {
+          crypt.import_encryption_key(credential).then((key) => {
+            let iv = putil.string_to_bytes(atob(data.iv));
+            let ciphertext = putil.string_to_bytes(atob(data.data));
 
-          return crypt.decrypt(key, iv, ciphertext);
-        }).then((cleartext) => {
-          resolve(JSON.parse(putil.bytes_to_string(cleartext)));
-        }).catch((err) => {
-          reject(err);
-        });
+            return crypt.decrypt(key, iv, ciphertext);
+          }).then((cleartext) => {
+            resolve(JSON.parse(putil.bytes_to_string(cleartext)));
+          }).catch((err) => {
+            reject(err);
+          });
+        } else {
+          resolve([]);
+        }
       }).fail((err) => {
         console.log("Setting get failed");
         reject(err);
@@ -203,7 +218,10 @@ const do_login = (login, password, host) => {
     localStorage.setItem("__pegasus.login", login);
     localStorage.setItem("__pegasus.host", host);
 
-    return get_settings();
+    return get_settings().then((settings) => {
+      window.__pegasus_settings = settings;
+      init_typeahead(settings);
+    });
   });
 };
 
@@ -214,6 +232,8 @@ const apply_settings = (item) => {
   document.getElementById('numbers').checked = item.numbers;
   document.getElementById('symbols').checked = item.symbols;
   document.getElementById('more_symbols').checked = item.more_symbols;
+
+  document.getElementById('password').focus();
 }
 
 const gen_pass = (master_pass, site, login, count, length, numbers, symbols, more_symbols) => {
@@ -230,9 +250,31 @@ const gen_pass = (master_pass, site, login, count, length, numbers, symbols, mor
 };
 
 const show_save = () => {
-  if(get_login()) {
-
+  if(get_login() && document.getElementById('login').value.length && document.getElementById('site').value.length) {
+    $("#save_button").removeClass("hidden");
+  } else {
+    $("#save_button").addClass("hidden");
   }
+};
+
+const gen_settings = () => {
+  let login = document.getElementById("login").value;
+  let site = document.getElementById("site").value;
+  let count = parseInt(document.getElementById("counter").value);
+  let length = parseInt(document.getElementById("length").value);
+  let numbers = document.getElementById("numbers").checked;
+  let symbols = document.getElementById("symbols").checked;
+  let more_symbols = document.getElementById("more_symbols").checked;
+
+  return {
+    login,
+    site,
+    count,
+    length,
+    numbers,
+    symbols,
+    more_symbols
+  };
 };
 
 const password_input = () => {
@@ -241,7 +283,6 @@ const password_input = () => {
   }
 
   window.password_timeout = setTimeout(() => {
-    show_save();
     generate_story();
     generate_password();
   }, 500);
@@ -254,10 +295,10 @@ const input_changed = () => {
 
   if(document.getElementById('password').value.length !== 0) {
     window.password_timeout = setTimeout(() => {
-      show_save();
       generate_password();
     }, 500);
   }
+  show_save();
 };
 
 const icons = [
