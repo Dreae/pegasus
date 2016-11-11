@@ -2,11 +2,13 @@
 
 window.$ = window.jQuery = require('jquery'); 
 const crypt = require("./pegasus-crypto");
+const putil = require('./util');
 const Clipboard = require('clipboard');
 
 require('./lib/css/bootstrap.min.css');
 require('./lib/js/bootstrap.min.js');
-require('seedrandom');
+require('seedrandom/seedrandom.min.js');
+require('bootstrap-3-typeahead/bootstrap3-typeahead.min.js')
 
 
 require("file?name=icon-32.png!./icon-32.png");
@@ -51,17 +53,138 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   new Clipboard("#copy_button");
+  if(get_login()) {
+    get_settings().then((settings) => {
+      init_typeahead(settings);
+    });
+  }
+
+  document.getElementById('site').focus();
 });
 
+const init_typeahead = (settings) => {
+  $("#site").typeahead({
+    source: settings,
+    fitToElement: true,
+    displayText: (item) => {
+      if(item.site) {
+        return `${item.site} - ${item.login}`;
+      } else {
+        return item;
+      }
+    },
+    updater: (item) => {
+      apply_settings(item);
+      return item.site;
+    }
+  });
+};
+
+const get_login = () => {
+  return !!window.localStorage && !!window.localStorage.getItem("__pegasus.credential");
+}
+
+const get_settings = () => {
+  return new Promise((resolve, reject) => {
+    let credential = putil.string_to_bytes(atob(localStorage.getItem("__pegasus.credential")));
+    let host = localStorage.getItem("__pegasus.host");
+    let login = localStorage.getItem("__pegasus.login");
+
+    crypt.import_signing_key(credential).then((key) => {
+      return crypt.sign(key, putil.string_to_bytes(login));
+    }).then((signature) => {
+      let sig_encoded = encodeURIComponent(btoa(putil.bytes_to_string(signature)));
+      $.getJSON(`${host}/api/${sig_encoded}`).done((data) => {
+        crypt.import_encryption_key(credential).then((key) => {
+          let iv = putil.string_to_bytes(atob(data.iv));
+          let ciphertext = putil.string_to_bytes(atob(data.data));
+
+          return crypt.decrypt(key, iv, ciphertext);
+        }).then((cleartext) => {
+          resolve(JSON.parse(putil.bytes_to_string(cleartext)));
+        }).catch((err) => {
+          reject(err);
+        });
+      }).fail((err) => {
+        console.log("Setting get failed");
+        reject(err);
+      });
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+};
+
+const put_settings = (settings) => {
+  return new Promise((resolve, reject) => {
+    let credential = putil.string_to_bytes(atob(localStorage.getItem("__pegasus.credential")));
+    let host = localStorage.getItem("__pegasus.host");
+    let login = localStorage.getItem("__pegasus.login");
+    let iv = new Uint8Array(16);
+    crypto.getRandomValues(iv);
+
+    crypt.import_encryption_key(credential).then((key) => {
+      return crypt.encrypt(key, iv, putil.string_to_bytes(JSON.stringify(settings)));
+    }).then((ciphertext) => {
+      let data = {
+        iv: btoa(putil.bytes_to_string(iv)),
+        data: btoa(putil.bytes_to_string(ciphertext))
+      };
+
+      return crypt.import_signing_key(credential).then((key) => {
+        return crypt.sign(key, putil.string_to_bytes(login));
+      }).then((signature) => {
+        let sig_encoded = encodeURIComponent(btoa(putil.bytes_to_string(signature)));
+        $.ajax({
+          type: "PUT",
+          url: `${host}/api/${sig_encoded}`,
+          data: JSON.stringify(data),
+          contentType: "application/json"
+        }).done(() => {
+          resolve();
+        }).fail((err) => {
+          console.log("Setting update failed");
+          reject(err);
+        });
+      });
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+};
+
+const do_login = (login, password, host) => {
+  return crypt.import_key(putil.string_to_bytes(password)).then((key) => {
+    return crypt.derive_key(key, putil.string_to_bytes(login));
+  }).then((key) => {
+    return crypt.export_key(key);
+  }).then((bytes) => {
+    let credential = btoa(putil.bytes_to_string(bytes));
+    localStorage.setItem("__pegasus.credential", credential);
+    localStorage.setItem("__pegasus.login", login);
+    localStorage.setItem("__pegasus.host", host);
+
+    get_settings();
+  });
+};
+
+const apply_settings = (item) => {
+  document.getElementById('login').value = item.login;
+  document.getElementById('length').value = item.length;
+  document.getElementById('counter').value = item.count;
+  document.getElementById('numbers').checked = item.numbers;
+  document.getElementById('symbols').checked = item.symbols;
+  document.getElementById('more_symbols').checked = item.more_symbols;
+}
+
 const gen_pass = (master_pass, site, login, count, length, numbers, symbols, more_symbols) => {
-  let encoder = new TextEncoder("utf-8");
-  let master_pass_buf = encoder.encode(master_pass);
-  let salt = encoder.encode(site + "; " + login + ":" + count);
+  let master_pass_buf = putil.string_to_bytes(master_pass);
+  let salt = putil.string_to_bytes(site + "; " + login + ":" + count);
 
   return crypt.import_key(master_pass_buf).then((key) => {
     return crypt.derive_key(key, salt);
   }).then((derived_key) => {
-    return crypt.sign_key(derived_key, salt);
+    return crypt.sign(derived_key, salt);
   }).then((sig) => {
     return crypt.render_pass(sig, numbers, symbols, more_symbols, length);
   });
