@@ -35,7 +35,7 @@ const generate_password = () => {
 };
 
 const do_login_click = () => {
-  let passowrd = document.getElementById("login_password").value;
+  let password = document.getElementById("login_password").value;
   let username = document.getElementById("username").value;
   let host = document.getElementById("login_host").value;
 
