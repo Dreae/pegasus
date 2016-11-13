@@ -28,11 +28,6 @@ body {
   color: #bbb;
 }
 
-.nav-link-btn .glyphicon {
-  vertical-align: middle;
-  cursor: pointer;
-}
-
 .mar-horizontal-sm {
   margin-left: 2px;
   margin-right: 2px;
@@ -67,4 +62,8 @@ body {
 
 .pos-relative {
   position: relative;
+}
+
+.mar-none {
+  margin: 0;
 }

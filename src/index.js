@@ -66,10 +66,30 @@ const do_logout_click = () => {
   $("#logout_button").toggleClass("hidden");
 };
 
+const update_settings = () => {
+  return put_settings(window.__pegasus_settings).then(() => {
+    init_typeahead(window.__pegasus_settings);
+  });
+}
+
 const do_save_click = (e) => {
-  window.__pegasus_settings.push(gen_settings());
-  put_settings(window.__pegasus_settings).then(() => {
+  let settings = gen_settings();
+  window.__pegasus_settings = window.__pegasus_settings.filter(set => set.login !== settings.login || set.site !== settings.site);
+  window.__pegasus_settings.push(settings);
+
+  update_settings(window.__pegasus_settings).then(() => {
     $("#save_button").addClass("hidden");
+  });
+
+  e.preventDefault();
+};
+
+const do_delete_click = (e) => {
+  let settings = gen_settings();
+  window.__pegasus_settings = window.__pegasus_settings.filter(set => set.login !== settings.login || set.site !== settings.site);
+
+  update_settings(window.__pegasus_settings).then(() => {
+    $("#delete_button").addClass("hidden");
   });
 
   e.preventDefault();
@@ -83,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('do_login_button').addEventListener('click', do_login_click);
   document.getElementById('cancel_login_button').addEventListener('click', cancel_login_click);
   document.getElementById('save_button').addEventListener('click', do_save_click);
+  document.getElementById('delete_button').addEventListener('click', do_delete_click);
 
   let inputs = document.getElementsByTagName("input");
   for(let i = 0; i < inputs.length; i++) {
@@ -113,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 const init_typeahead = (settings) => {
+  $('#site').typeahead('destroy')
   $("#site").typeahead({
     source: settings,
     fitToElement: true,
@@ -125,6 +147,9 @@ const init_typeahead = (settings) => {
     },
     updater: (item) => {
       apply_settings(item);
+
+      $("#save_button").addClass("hidden");
+      $("#delete_button").removeClass("hidden");
       return item.site;
     }
   });
@@ -250,8 +275,17 @@ const gen_pass = (master_pass, site, login, count, length, numbers, symbols, mor
 };
 
 const show_save = () => {
-  if(get_login() && document.getElementById('login').value.length && document.getElementById('site').value.length) {
-    $("#save_button").removeClass("hidden");
+  let login = document.getElementById('login').value;
+  let site = document.getElementById('site').value;
+  if(get_login() && login.length && site.length) {
+    let current_setting = window.__pegasus_settings.filter(set => set.site === site && set.login === login);
+    if(current_setting.length) {
+      $("#delete_button").removeClass("hidden");
+      $("#save_button").addClass("hidden");
+    } else {
+      $("#save_button").removeClass("hidden");
+      $("#delete_button").addClass("hidden");
+    }
   } else {
     $("#save_button").addClass("hidden");
   }
@@ -298,6 +332,7 @@ const input_changed = () => {
       generate_password();
     }, 500);
   }
+
   show_save();
 };
 
