@@ -4,6 +4,7 @@ window.$ = window.jQuery = require('jquery');
 const crypt = require("./pegasus-crypto");
 const putil = require('./util');
 const Clipboard = require('clipboard');
+const equal = require('deep-equal');
 
 require('./lib/css/bootstrap.min.css');
 require('./lib/js/bootstrap.min.js');
@@ -281,10 +282,14 @@ const show_save = () => {
     let current_setting = window.__pegasus_settings.filter(set => set.site === site && set.login === login);
     if(current_setting.length) {
       $("#delete_button").removeClass("hidden");
+    } else {
+      $("#delete_button").addClass("hidden");
+    }
+
+    if(current_setting.length && equal(current_setting[0], gen_settings())) {
       $("#save_button").addClass("hidden");
     } else {
       $("#save_button").removeClass("hidden");
-      $("#delete_button").addClass("hidden");
     }
   } else {
     $("#save_button").addClass("hidden");

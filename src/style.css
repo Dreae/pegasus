@@ -67,3 +67,7 @@ body {
 .mar-none {
   margin: 0;
 }
+
+.mar-right-md {
+  margin-right: 8px;
+}
