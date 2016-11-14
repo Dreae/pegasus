@@ -200,7 +200,7 @@ const put_settings = (settings) => {
     let credential = putil.string_to_bytes(atob(localStorage.getItem("__pegasus.credential")));
     let host = localStorage.getItem("__pegasus.host");
     let login = localStorage.getItem("__pegasus.login");
-    let iv = new Uint8Array(16);
+    let iv = new Uint8Array(128);
     crypto.getRandomValues(iv);
 
     crypt.import_encryption_key(credential).then((key) => {

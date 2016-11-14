@@ -9,7 +9,7 @@ const import_signing_key = (key) => {
 }
 
 const import_encryption_key = (key) => {
-  return crypto.subtle.importKey("raw", key.slice(0, 32), {name: "AES-CBC", length: 256}, false, ["encrypt", "decrypt"]);
+  return crypto.subtle.importKey("raw", key.slice(0, 32), {name: "AES-GCM", length: 256}, false, ["encrypt", "decrypt"]);
 }
 
 const derive_key = (master_key, salt) => {
@@ -43,11 +43,11 @@ const sign = (derived_key, salt) => {
 };
 
 const encrypt = (key, iv, cleartext) => {
-  return crypto.subtle.encrypt({name: "AES-CBC", iv: iv}, key, cleartext);
+  return crypto.subtle.encrypt({name: "AES-GCM", iv: iv, tagLength: 128}, key, cleartext);
 };
 
 const decrypt = (key, iv, ciphertext) => {
-  return crypto.subtle.decrypt({name: "AES-CBC", iv: iv}, key, ciphertext);
+  return crypto.subtle.decrypt({name: "AES-GCM", iv: iv, tagLength: 128}, key, ciphertext);
 }
 
 const render_pass = (signature, numbers, symbols, more_symbols, length) => {
