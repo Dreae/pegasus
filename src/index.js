@@ -62,6 +62,7 @@ const do_logout_click = () => {
   localStorage.removeItem("__pegasus.credential");
   localStorage.removeItem("__pegasus.host");
   localStorage.removeItem("__pegasus.login");
+  localStorage.removeItem("__pegasus.settings");
 
   $("#login_button").toggleClass("hidden");
   $("#logout_button").toggleClass("hidden");
@@ -124,6 +125,10 @@ document.addEventListener('DOMContentLoaded', function() {
   if(get_login()) {
     $("#login_button").toggleClass("hidden");
     $("#logout_button").toggleClass("hidden");
+    let settings = window.localStorage.getItem("__pegasus.settings");
+    if(settings) {
+      init_typeahead(settings);
+    }
 
     get_settings().then((settings) => {
       window.__pegasus_settings = settings;
@@ -178,7 +183,10 @@ const get_settings = () => {
 
             return crypt.decrypt(key, iv, ciphertext);
           }).then((cleartext) => {
-            resolve(JSON.parse(putil.bytes_to_string(cleartext)));
+            let settings = JSON.parse(putil.bytes_to_string(cleartext));
+            window.localStorage.setItem("__pegasus.settings", settings);
+
+            resolve(settings);
           }).catch((err) => {
             reject(err);
           });
@@ -221,6 +229,7 @@ const put_settings = (settings) => {
           data: JSON.stringify(data),
           contentType: "application/json"
         }).done(() => {
+          window.localStorage.setItem("__pegasus.settings", settings);
           resolve();
         }).fail((err) => {
           console.log("Setting update failed");
